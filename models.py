@@ -4,6 +4,12 @@ from database import base,db_engine
 from datetime import datetime
 from datetime import datetime, timedelta
 from sqlalchemy import Boolean, Column, ForeignKey,  String, DateTime, LargeBinary,func
+from database import DATABASE_URL
+from sqlalchemy import create_engine
+
+
+db_engine = create_engine(DATABASE_URL)
+
 
 
 class Signup_Otp(base):
