@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import requests
 from sqlalchemy import null
-
+from database import base,db_engine
 from database import SessionLocal
 from sqlalchemy.orm import Session
 from sqlalchemy import Boolean
