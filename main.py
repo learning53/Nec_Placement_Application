@@ -917,6 +917,7 @@ async def login(request:Request,db:Session=Depends(get_db)):
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
+        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 
