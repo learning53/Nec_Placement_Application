@@ -8,6 +8,7 @@ DATABASE_URL = 'postgresql://root:5HveBxrbtFCFfmpmn2SFdeGrxjv1LKCS@dpg-coh4htuv3
 # Create the database engine with the specific dialect
 db_engine = create_engine(DATABASE_URL, dialect='postgresql')
 print(type(db_engine))
+
 # Create a sessionmaker
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
 
