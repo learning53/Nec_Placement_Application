@@ -166,6 +166,7 @@ async def otpVerification(request:Request,db:Session=Depends(get_db)):
 @app.post("/signup")
 async def signup(request: Request, db: Session = Depends(get_db)):
     try:
+        print("hello");
         data = await request.json()
         print(data)
         email = data.get('email')
