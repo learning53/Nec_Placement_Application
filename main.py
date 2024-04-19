@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import requests
 from sqlalchemy import null
-from database import base,db_engine
+
 from database import SessionLocal
 from sqlalchemy.orm import Session
 from sqlalchemy import Boolean
@@ -130,11 +130,9 @@ async def getotp(request: Request, db: Session = Depends(get_db)):
 
      
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 
@@ -157,13 +155,10 @@ async def otpVerification(request:Request,db:Session=Depends(get_db)):
                     return JSONResponse(content={"message":"Wrong OTP for the account"},status_code=401)
         else:
                 return JSONResponse(content={"message":"Incorrect of data"},status_code=400)
-    
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -241,11 +236,9 @@ async def signup(request: Request, db: Session = Depends(get_db)):
             return JSONResponse(content={"error":"Request data is not fullfilled"}, status_code=400)
          
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 
@@ -428,11 +421,9 @@ async def registeration(request:Request,db:Session=Depends(get_db)):
         return JSONResponse(content={"message":"Datas are Registered successfully"},status_code=200)
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -460,11 +451,9 @@ async def placement_coordinator(request:Request,db:Session=Depends(get_db)):
             return JSONResponse(content={"message":"Registered Successfully"},status_code=200)
        
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -503,11 +492,10 @@ async def approvals(request:Request,db:Session=Depends(get_db),current_user: str
                 return JSONResponse(content={"error":"User does not have the privilege"},status_code=400)
 
     except HTTPException as e:
-        print(e)
+        print(e.status_code)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -556,12 +544,12 @@ async def updateStudentStatus(id: int, status: str, request: Request, db: Sessio
             return JSONResponse(content={"error": "User does not have the privilege"}, status_code=400)
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
-    
+
     except Exception as e:
         print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
+
 
 
 
@@ -588,11 +576,9 @@ async def approvals(request:Request,db:Session=Depends(get_db),current_user: str
             
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -731,9 +717,8 @@ async def getPlacedData(request: Request, db: Session = Depends(get_db), current
             return JSONResponse(content={"error": "User does not have the privilege"}, status_code=400)
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
-    
+
     except Exception as e:
         print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
@@ -754,11 +739,10 @@ async def getHRData(request: Request, db : Session = Depends(get_db), current_us
                 existing_mail = db.query(models.HRData).filter(models.HRData.email==email).filter(models.HRData.status=="ACTIVE").first()
                 if not existing_mail:
                     name = data.get('name')
-                    c_name = data.get('c_name')
+                    c_name = data.get('company_name')
                     phoneno = data.get('phoneno')
                     core = data.get('core')
-                    Location=data.get("Location")
-                    new_user = models.HRData(name = name, email=email,Location=Location,company_name = c_name, phoneno = phoneno,core = core,status="ACTIVE")
+                    new_user = models.HRData(name = name, email=email, company_name = c_name, phoneno = phoneno,core = core,status="ACTIVE")
                     db.add(new_user)
                     db.commit()
                     return JSONResponse(content={"message": "Signup successful","profile":"HR"}, status_code=200)
@@ -769,11 +753,9 @@ async def getHRData(request: Request, db : Session = Depends(get_db), current_us
             return JSONResponse(content={"Message": "Account does not have the privilege"}, status_code=404)
      
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
          
 
@@ -787,7 +769,6 @@ async def getHRData(request: Request, db : Session = Depends(get_db), current_us
             else:
                 existing_mail = db.query(models.HRData).filter(models.HRData.status=="ACTIVE").all()
                 if existing_mail:
-                    existing_mail=jsonable_encoder(existing_mail)
                     return JSONResponse(content={"Hr Data": existing_mail}, status_code=200)
                 else:
                     return JSONResponse(content={"error":"No Data Found"}, status_code=200)
@@ -796,11 +777,9 @@ async def getHRData(request: Request, db : Session = Depends(get_db), current_us
             return JSONResponse(content={"Message": "Account does not have the privilege"}, status_code=404)
      
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -809,6 +788,7 @@ async def updateHRData(id: int, request: Request, db : Session = Depends(get_db)
     try:
 
         data = await request.json()
+        
         user = db.query(models.HRData).filter(models.HRData.id == id).filter(models.HRData.status=="ACTIVE").first()
         print(user)
         if user:
@@ -816,12 +796,10 @@ async def updateHRData(id: int, request: Request, db : Session = Depends(get_db)
                  return JSONResponse(content={"error": "Email cannot be changed"}, status_code=400)
             
             else:
-                print(data)
                 user.name = data.get('name') if 'name' in data else user.name
                 user.phoneno = data.get('phoneno') if 'phoneno' in data else user.phoneno
                 user.core = data.get('core') if 'core' in data else user.core
                 user.company_name = data.get('company_name') if 'company_name' in data else user.company_name
-                user.Location = data.get('Location') if 'Location' in data else user.Location
                 db.commit()
                 return JSONResponse(content={"message": "Update Successful"}, status_code=200)
 
@@ -829,7 +807,6 @@ async def updateHRData(id: int, request: Request, db : Session = Depends(get_db)
             return JSONResponse(content={"message": "User not found!"}, status_code=404)
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
@@ -872,7 +849,7 @@ async def login(request:Request,db:Session=Depends(get_db)):
                     )
                     return JSONResponse(content={"bearer": access_token,"Profile":"Master"},status_code=200)
                 else:
-                    return JSONResponse(content={"Error":"Create your account first"},status_code=403)
+                    return JSONResponse(content={"Error":"Redirect to registeration page"},status_code=403)
 
 
 
@@ -893,11 +870,10 @@ async def login(request:Request,db:Session=Depends(get_db)):
             
             
             elif not any(char.isdigit() for char in email):
-                body=db.query(models.Staff_signup).filter(models.Staff_signup.email==email).filter(models.Staff_signup.password==password).filter(models.Placement_signup.status=="Active").first()
-                user_data=db.query()
+                body=db.query(models.Staff_signup).filter(models.Staff_signup.email==email).filter(models.Staff_signup.password==password).filter(models.Staff_signup.status=="Active").first()
                 if body:
                     user_data=db.query(models.staff_coordinator).filter(models.staff_coordinator.email==email).filter(models.staff_coordinator.status=="Active").first()
-                    # print(user_data)
+                    print(user_data)
                     if user_data:
                         access_token_expires = timedelta(hours=1)
                         access_token = create_access_token(
@@ -932,11 +908,9 @@ async def login(request:Request,db:Session=Depends(get_db)):
             return JSONResponse(content={"Error":"Request data are not fullfilled"},status_code=400)
         
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 
@@ -951,11 +925,9 @@ async def home(request:Request,db:Session=Depends(get_db),current_user: str = De
            return JSONResponse(content={"companyData":company_data},status_code=200)
     
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -992,11 +964,9 @@ async def addcompany(request:Request,db:Session=Depends(get_db),current_user: st
     
     
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 
@@ -1079,11 +1049,9 @@ async def placementinfo(request: Request, db: Session = Depends(get_db), current
                     return JSONResponse(content={"Error":"Account does not have the privilege"},status_code=400) 
         
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -1183,11 +1151,9 @@ async def placementemail(request:Request,db:Session=Depends(get_db),current_user
                         return JSONResponse(content={"Error":"Account does not have the privilege"},status_code=400) 
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 
@@ -1219,11 +1185,9 @@ async def studentdata(request: Request, db: Session = Depends(get_db), current_u
                     return JSONResponse(content={"error":"No Data Found"},status_code=400)
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -1271,11 +1235,9 @@ async def updateStudentStatus(id: int, status: str, request: Request, db: Sessio
             return JSONResponse(content={"error": "Unauthorized access"}, status_code=403)
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
      
 
@@ -1324,11 +1286,9 @@ async def getprofile(request:Request,db:Session=Depends(get_db),current_user:str
                     return JSONResponse(content={"error":"No data Found"},status_code=403)
     
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -1516,11 +1476,9 @@ async def updateprofile(request:Request,db:Session=Depends(get_db),current_user:
                 return JSONResponse(content={"Error":"Extension is Not in the correct format"},status_code=400)
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -1540,11 +1498,9 @@ async def getaccess(request: Request, db: Session = Depends(get_db), current_use
             return JSONResponse(content={"error": "No user Found"}, status_code=400)
     
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -1568,11 +1524,9 @@ async def getaccessdata(request:Request,db:Session=Depends(get_db),current_user:
           return JSONResponse(content={"message":"Datas are incomplete"},status_code=400)
     
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -1618,11 +1572,9 @@ async def getdata(request:Request,db:Session=Depends(get_db),current_user:str=De
             return JSONResponse(content={"Error":"User Not found"},status_code=400)
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 
@@ -1649,11 +1601,9 @@ async def getuserplacedData(request:Request,db:Session=Depends(get_db),current_u
                 return JSONResponse(content={"Error":"User Not found"},status_code=400)   
     
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -1733,7 +1683,6 @@ async def placeddata(request:Request,db:Session=Depends(get_db),current_user:str
             return JSONResponse(content={"Error":"User Not found"},status_code=400)
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
@@ -1783,11 +1732,9 @@ async def getStudentData(request: Request, db: Session = Depends(get_db),current
                         return JSONResponse(content={"message":"No Data Found"},status_code=200)          
        
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)     
 
 
@@ -1801,11 +1748,9 @@ async def get_department_students(request: Request, db: Session = Depends(get_db
         return JSONResponse(content={"data": serialized_data},status_code=200)
    
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 
@@ -1818,11 +1763,9 @@ async def get_company_details(request:Request, db: Session = Depends(get_db), cu
         return  JSONResponse(content={"company_data": serialized_data},status_code=200)
     
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 # Show companies round details
@@ -1835,11 +1778,9 @@ async def get_company_details(id :int,request:Request,db:Session=Depends(get_db)
         return  JSONResponse(content={"company_data": serialized_data},status_code=200)
     
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 # Show passes students data in a  round
@@ -1854,11 +1795,9 @@ async def get_passed_students(id: int, round_name: str, request: Request, db: Se
         return JSONResponse(content={"students_data": students_data},status_code=200) 
     
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -1890,7 +1829,6 @@ async def parentsignup(request: Request, db: Session = Depends(get_db)):
             return JSONResponse(content={"error":"Request data is not fullfilled"}, status_code=400)
          
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
@@ -1921,11 +1859,9 @@ async def parentsignup(request: Request, db: Session = Depends(get_db)):
             return JSONResponse(content={"error":"Request data is not fullfilled"}, status_code=400)
          
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
@@ -1954,9 +1890,7 @@ async def getParentProfile(request:Request,db:Session=Depends(get_db),current_us
             #    return {'user_data':user_data,'company_info':company_info,'programmingportals':programmingportals}
 
     except HTTPException as e:
-        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
-        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
