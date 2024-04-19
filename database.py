@@ -12,4 +12,4 @@ db_engine = create_engine(DATABASE_URL, dialect='postgresql')
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
 
 # Create a declarative base
-Base = declarative_base()
+base = declarative_base()
