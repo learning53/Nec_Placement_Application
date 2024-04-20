@@ -249,8 +249,10 @@ async def signup(request: Request, db: Session = Depends(get_db)):
 async def registeration(request:Request,db:Session=Depends(get_db)):
     try:
         data=await request.form()
+        print(data)
         regno=data.get('regno')
         name=data.get('name')
+        annual_income=data.get('incomeRange')
         department=data.get('department')
         email=data.get('email')
         phone_Number=data.get('phone_Number')
@@ -371,6 +373,7 @@ async def registeration(request:Request,db:Session=Depends(get_db)):
                     Aadhar_No=Aadhar_No,
                     Gender=Gender,
                     DOB=DOB,
+                    annual_income=annual_income,
                     tutor_name=tutor_name,
                     personal_Email=personal_Email,
                     caste=caste,
@@ -419,7 +422,6 @@ async def registeration(request:Request,db:Session=Depends(get_db)):
         db.add(body)
         db.commit()
         return JSONResponse(content={"message":"Datas are Registered successfully"},status_code=200)
-
     except HTTPException as e:
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
