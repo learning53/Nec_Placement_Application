@@ -17,7 +17,6 @@ db_engine = create_engine(
 
 # Create a sessionmaker
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
-con = engine.connect()
 # Create a declarative base
 base = declarative_base()
 
