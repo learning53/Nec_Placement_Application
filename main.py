@@ -817,6 +817,32 @@ async def getPlacedData(request: Request, db: Session = Depends(get_db), current
 
 
 
+@app.get('/download/{file_type}/{file_name}')
+async def get_file(file_type: str, file_name: str):
+    try:
+        if file_type == "declaration":
+            file_path = f"./declaration/{file_name}"
+        elif file_type == "offerletter":
+            file_path = f"./offerletter/{file_name}"
+        elif file_type == "internletter":
+            file_path = f"./internletter/{file_name}"
+        elif file_type == "feedback":
+            file_path = f"./feedback/{file_name}"
+        else:
+            return JSONResponse(content={"error": "Invalid file type"}, status_code=400)
+        if os.path.exists(file_path):
+            return FileResponse(file_path)
+        else:
+            return JSONResponse(content={"error": "File not found"}, status_code=404)
+    
+    except HTTPException as e:
+        print(e)
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+
+    except Exception as e:
+        print(e)
+        return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
+
 @app.post('/hrData')
 async def getHRData(request: Request, db : Session = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
