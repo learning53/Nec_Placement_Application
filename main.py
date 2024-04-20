@@ -325,9 +325,11 @@ async def signup(request: Request, db: Session = Depends(get_db)):
             return JSONResponse(content={"error":"Request data is not fullfilled"}, status_code=400)
          
     except HTTPException as e:
+        print(e)
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     
     except Exception as e:
+        print(e)
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
     
 
