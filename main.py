@@ -691,6 +691,7 @@ async def updateStudentStatus(id: int, status: str, request: Request, db: Sessio
                             name=user.name,
                             department=user.department,
                             email=user.email,
+                            annual_income=user.annual_income,
                             phone_Number=user.phone_Number,
                             pan_No=user.pan_No,
                             Aadhar_No=user.Aadhar_No,
