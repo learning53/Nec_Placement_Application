@@ -162,6 +162,95 @@ async def otpVerification(request:Request,db:Session=Depends(get_db)):
         return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
 
 
+
+
+
+@app.post('/adminplaceddata')
+async def placeddata(request: Request, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
+    try:
+        data = await request.form()
+        print(data)
+        email = data.get('email')
+        
+        # Check if all required fields are present in the form data
+        required_fields = ['email', 'Name', 'Department', 'Phone', 'DOB', 'address', 'companyname', 'modeofhiring', 'type', 'package', 'location']
+        for field in required_fields:
+            if field not in data:
+                return JSONResponse(content={"error": f"Field '{field}' is missing in the form data"}, status_code=400)
+        
+        # Retrieve other form data fields
+        name = data.get('Name')
+        department = data.get('Department')
+        phoneno = data.get('Phone')
+        dob = data.get('DOB')  # Corrected field name
+        type = data.get('type')
+        address = data.get('address')
+        companyname = data.get('companyname')
+        modeofhiring = data.get('modeofhiring')
+        package = data.get('package')
+        location = data.get('location')
+
+        # Retrieve file objects
+        declaration_file = data.get('Declaration')
+        feedback_file = data.get('Feedback')
+        internletter_file = data.get('internletter')
+        offerletter_file = data.get('Offerletter')
+
+        # Check if all required files are present
+        if all(file is not None for file in [declaration_file, feedback_file, internletter_file, offerletter_file]):
+            # Generate unique filenames for uploaded files
+            token_declaration = str(uuid.uuid4()) + '.docx'
+            token_feedback = str(uuid.uuid4()) + '.docx'
+            token_internletter = str(uuid.uuid4()) + '.docx'
+            token_offerletter = str(uuid.uuid4()) + '.docx'
+
+            # Define upload folder paths
+            upload_folder = "./uploads"
+            upload_declaration_folder = os.path.join(upload_folder, "declaration")
+            upload_feedback_folder = os.path.join(upload_folder, "feedback")
+            upload_internletter_folder = os.path.join(upload_folder, "internletter")
+            upload_offerletter_folder = os.path.join(upload_folder, "offerletter")
+
+            # Create upload folders if they don't exist
+            os.makedirs(upload_folder, exist_ok=True)
+            os.makedirs(upload_declaration_folder, exist_ok=True)
+            os.makedirs(upload_feedback_folder, exist_ok=True)
+            os.makedirs(upload_internletter_folder, exist_ok=True)
+            os.makedirs(upload_offerletter_folder, exist_ok=True)
+
+            # Save uploaded files
+            declaration_path = os.path.join(upload_declaration_folder, token_declaration)
+            feedback_path = os.path.join(upload_feedback_folder, token_feedback)
+            internletter_path = os.path.join(upload_internletter_folder, token_internletter)
+            offerletter_path = os.path.join(upload_offerletter_folder, token_offerletter)
+
+            with open(declaration_path, 'wb') as file:
+                shutil.copyfileobj(declaration_file.file, file)
+            with open(feedback_path, 'wb') as file:
+                shutil.copyfileobj(feedback_file.file, file)
+            with open(internletter_path, 'wb') as file:
+                shutil.copyfileobj(internletter_file.file, file)
+            with open(offerletter_path, 'wb') as file:
+                shutil.copyfileobj(offerletter_file.file, file)
+
+            # Save data to the database
+            placeddata=models.Placeddata(email=email,name=name,type=type,department=department,phoneno=phoneno,dob=dob,address=address,companyname=companyname,modeofhiring=modeofhiring,package=package,location=location,declaration=token_declaration,offerletter=token_offerletter,internletter=token_internletter,feedback=token_feedback,created_by=current_user,status="Active")
+            db.query(models.Registeration).filter(models.Registeration.email == email).filter(models.Registeration.status=="Active").update({"placement_status": "Placed"})
+            db.add(placeddata)
+            db.commit()
+                
+            return JSONResponse(content={"message": "Data submitted successfully"}, status_code=200)
+        else:
+            return JSONResponse(content={"error": "One or more files are missing in the form data"}, status_code=400)
+
+    except HTTPException as e:
+        print(e)
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+    
+    except Exception as e:
+        print(e)
+        return JSONResponse(content={"error": "Internal Server Error"}, status_code=500)
+
 # for getting email and password
 @app.post("/signup")
 async def signup(request: Request, db: Session = Depends(get_db)):
