@@ -117,6 +117,7 @@ class Registeration(base):
     DOB=Column(String(255), nullable=False, index=True)
     personal_Email=Column(String(255), nullable=True, index=True)
     caste=Column(String(255), nullable=False, index=True)
+    annual_income=Column(String(255), nullable=False, index=True)
     religion=Column(String(255), nullable=False, index=True)
     marital_Status=Column(String(255), nullable=False, index=True)
     Father_Name=Column(String(255), nullable=False, index=True)
@@ -174,6 +175,7 @@ class ApprovalRegisteration(base):
     phone_Number=Column(String(255), nullable=False, index=True)
     pan_No=Column(String(255), nullable=False, index=True)
     Aadhar_No=Column(String(255), nullable=False, index=True)
+    annual_income=Column(String(255), nullable=False, index=True)
     Gender=Column(String(255), nullable=False, index=True)
     DOB=Column(String(255), nullable=False, index=True)
     personal_Email=Column(String(255), nullable=True, index=True)
@@ -326,7 +328,7 @@ class HRData(base):
     email=Column(String(255), nullable=False, index=True)
     phoneno=Column(String(255), nullable=False, index=True)
     core=Column(String(255), nullable=False, index=True)
-    Location=Column(String(255), nullable=False, index=True)
+
     # common for all the tables
     status = Column(String(255), nullable=False, index=True)
     created_at = Column(DateTime, server_default=func.now())
@@ -407,6 +409,7 @@ class Placeddata(base):
     companyname=Column(String(255), nullable=False, index=True)
     modeofhiring=Column(String(255), nullable=False, index=True)
     package=Column(String(255), nullable=False, index=True)
+    type=Column(String(255), nullable=False, index=True)
     location=Column(String(255), nullable=False, index=True)
     declaration=Column(String(255), nullable=False, index=True)
     offerletter =Column(String(255), nullable=False, index=True)
