@@ -19,9 +19,3 @@ db_engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
 # Create a declarative base
 base = declarative_base()
-
-con = db_engine.connect()
-con.close()
-
-# Exit the script
-exit()
